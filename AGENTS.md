@@ -370,7 +370,7 @@ sudo umount /tmp/ir
 
 ## GitHub org context
 
-- **`castrojo/dakota-installer`** — this repo (pending rename from `castrojo/bootc-installer`; see issue #2)
+- **`projectbluefin/bootc-installer`** — this repo
 - **`tuna-os/bootc-installer`** — upstream source repo (read-only)
 - **`tuna-os/fisherman`** — Go backend (submodule at `fisherman/`)
 - **`tuna-os/github-copr`** — COPR definitions for c10s-gnome COPRs used in the image
