@@ -135,7 +135,7 @@ git add -A && git commit -m "fix: describe the change"
 git push
 
 # 3. Update the submodule pointer in the parent repo
-cd /var/home/james/dev/bootc-installer
+cd ~/dev/bootc-installer
 git add fisherman
 git commit -m "chore: update fisherman submodule (describe the change)"
 git push
@@ -144,7 +144,7 @@ git push
 ### Making changes to the Python GUI
 
 ```bash
-cd /var/home/james/dev/bootc-installer
+cd ~/dev/bootc-installer
 # edit bootc_installer/views/*.py or other files
 git add -A && git commit -m "fix: describe the change"
 git push
@@ -153,7 +153,7 @@ git push
 ### Building and deploying the Flatpak locally
 
 ```bash
-cd /var/home/james/dev/bootc-installer
+cd ~/dev/bootc-installer
 
 # Build and install locally (takes ~10 min first time; cached after)
 flatpak run org.flatpak.Builder \
@@ -199,7 +199,7 @@ ssh james@192.168.0.119 "tail -f ~/.cache/bootc-installer/fisherman-output.log"
 
 ## CI / releases
 
-- **Every push to `main`** triggers `.github/workflows/flatpak.yml` which builds
+- **Every push to `dev`** triggers `.github/workflows/flatpak.yml` which builds
   the Flatpak and publishes it as the `continuous` pre-release on GitHub.
 - **`.github/workflows/python-test.yml`** runs on every push: 210+ unit tests
   (no display) + 14 GTK UI integration tests (Xvfb).
@@ -368,10 +368,39 @@ sudo umount /tmp/ir
 
 ---
 
+## Branch strategy
+
+```
+feature/xyz  ──►  dev  ──►  prod
+```
+
+- **`dev`** is the integration branch. All feature PRs target `dev`.
+- **`prod`** is the release branch. It is promoted wholesale from `dev` when `dev` is in a shippable state — no cherry-picks, no partial merges.
+- Never open PRs directly against `prod`. Features land on `dev` first.
+- The merge queue is enabled for `dev`. Use `gh pr merge --squash <number>` or enqueue via the GitHub UI.
+
+### Current features in flight (targeting `dev`)
+
+| PR | Title | Status |
+|----|-------|--------|
+| #74 | fix(user): add DX groups to default user creation | APPROVED — failing Unit Tests (no display); re-run after #67 lands |
+| #73 | feat: pre-generate soundtrack QR codes | Draft — no review yet |
+| #72 | feat: GStreamer VP9/AV1 codec validation | Draft — no review yet |
+| #71 | feat: libpastry integration | Draft — no review yet |
+| #70 | feat: QR Phone Companion MVP | Draft — no review yet |
+| #69 | docs: add test plan documentation | APPROVED — failing Unit Tests (no display); re-run after #67 lands |
+| #68 | fix(ci): add Python coverage threshold gates | CHANGES_REQUESTED |
+| #67 | fix(test): resolve gi stub contamination | CHANGES_REQUESTED (all checks pass) — awaiting castrojo re-review |
+| #66 | test(unit): keymaps + main entry-point tests | APPROVED — failing Unit Tests (no display); re-run after #67 lands |
+| #60 | test(unit): Locale, Diskutils, RecipeLoader tests | APPROVED — failing Unit Tests (no display); re-run after #67 lands |
+| #59 | fix(ci): Go coverage + 70% threshold | APPROVED — failing Unit Tests (no display); re-run after #67 lands |
+
+> **Note:** The "Unit Tests (no display)" failures on #74/#69/#66/#60/#59 are caused by the gi stub contamination bug fixed in #67. Once #67 merges into `dev`, re-run CI on those PRs and they should go green.
+
+---
+
 ## GitHub org context
 
-- **`castrojo/dakota-installer`** — this repo (pending rename from `castrojo/bootc-installer`; see issue #2)
-- **`tuna-os/bootc-installer`** — upstream source repo (read-only)
-- **`tuna-os/fisherman`** — Go backend (submodule at `fisherman/`)
-- **`tuna-os/github-copr`** — COPR definitions for c10s-gnome COPRs used in the image
-- Images are published to `ghcr.io/tuna-os/` (e.g. `yellowfin:gnome50`, `yellowfin:gnome-hwe`)
+- **`projectbluefin/bootc-installer`** — this repo
+- **`projectbluefin/fisherman`** — Go backend (submodule at `fisherman/`)
+- Images are published to `ghcr.io/projectbluefin/`
