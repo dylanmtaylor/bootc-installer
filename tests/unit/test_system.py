@@ -14,6 +14,10 @@ from bootc_installer.core.system import (
     _GPU_VENDOR_DISPLAY,
 )
 
+_HAS_DISPLAY = bool(__import__("os").environ.get("DISPLAY") or __import__("os").environ.get("WAYLAND_DISPLAY"))
+
+_HAS_DISPLAY = bool(__import__("os").environ.get("DISPLAY") or __import__("os").environ.get("WAYLAND_DISPLAY"))
+
 
 # ── GPU detection tests ───────────────────────────────────────────────────────
 
@@ -107,6 +111,8 @@ class TestGpuDetection:
         assert result == []
 
 
+@__import__("pytest").mark.skipif(not _HAS_DISPLAY, reason="GPU tests require a display for Gtk icon lookup")
+@__import__("pytest").mark.skipif(not _HAS_DISPLAY, reason="GPU tests require a display for Gtk icon lookup")
 class TestGpuDisplayString:
     def setup_method(self):
         Systeminfo._gpus = None
@@ -145,6 +151,8 @@ class TestGpuDisplayString:
         assert Systeminfo.gpu_display_string() == ""
 
 
+@__import__("pytest").mark.skipif(not _HAS_DISPLAY, reason="GPU tests require a display for Gtk icon lookup")
+@__import__("pytest").mark.skipif(not _HAS_DISPLAY, reason="GPU tests require a display for Gtk icon lookup")
 class TestGpuIconName:
     def setup_method(self):
         Systeminfo._gpus = None
